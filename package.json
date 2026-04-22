@@ -1,12 +1,12 @@
 {
-  "name": "japan-travel-ai",
+  "name": "japan-travel-ai-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
+  "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.ts",
-    "dev": "tsx watch server.ts"
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,8 +17,11 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.2",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.4.1"
+    "mongoose": "^9.4.1",
+    "nodemailer": "^8.0.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -26,9 +29,9 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.0",
+    "@types/nodemailer": "^8.0.0",
     "eslint": "^9.39.4",
     "globals": "^17.5.0",
-    "jiti": "^2.6.1",
     "tsx": "^4.20.6",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.1"

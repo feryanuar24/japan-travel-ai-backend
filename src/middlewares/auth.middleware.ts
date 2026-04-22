@@ -1,27 +1,36 @@
-import type { JwtPayload } from "jsonwebtoken";
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: string | JwtPayload;
-  }
-}
-
-import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
+import type { Request, Response, NextFunction } from "express";
 
-export const protect = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization;
-
-  if (!token) return res.status(401).json({ message: "No token" });
+const auth = async (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token" });
+  }
+  const token = authHeader.slice(7);
 
   try {
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
       return res.status(500).json({ message: "JWT secret not configured" });
     }
-    const decoded = jwt.verify(token, secret);
-    req.user = decoded;
+    
+    const decoded = jwt.verify(token, jwtSecret);
+    if (typeof decoded === "string") {
+      return res.status(400).json({ message: "Invalid token payload" });
+    }
+    const userId = decoded.id;
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    req.user = user;
     next();
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(401).json({ message: "Invalid token" });
   }
 };
+
+export default auth;
