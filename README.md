@@ -1,22 +1,23 @@
+
 Japan Travel AI Backend
 =======================
 
-Deskripsi
----------
+Description
+-----------
 
-Backend API sederhana untuk proyek "Japan Travel AI". Menyediakan endpoint otentikasi, profil, dan itinerary.
+Simple backend API for the "Japan Travel AI" project. Provides authentication, profile, and itinerary endpoints.
 
 Quickstart
 ----------
 
-- Prasyarat: `Node.js` v18+ dan `npm` atau `pnpm`.
-- Install dependensi:
+- Requirements: `Node.js` v18+ and `npm` or `pnpm`.
+- Install dependencies:
 
 ```bash
 npm install
 ```
 
-- Menjalankan aplikasi (development):
+- Run the application (development):
 
 ```bash
 npm run dev
@@ -25,32 +26,32 @@ npm run dev
 Testing
 -------
 
-- Menjalankan test unit dengan `vitest`:
+- Run unit tests with `vitest`:
 
 ```bash
 npm test
 ```
 
-Konfigurasi
------------
+Configuration
+-------------
 
-- Salin variabel environment dari `.env.example` (jika ada) dan atur konfigurasi database serta email di `config/`.
+- Copy environment variables from `.env.example` (if available) and set up database and email configuration in `config/`.
 
-Struktur Singkat
-----------------
+Project Structure
+-----------------
 
-- `src/` : kode sumber
-- `src/controllers` : logika endpoint
-- `src/routes` : definisi route
-- `src/services` : layanan seperti pengiriman email
-- `src/models` : model data
+- `src/` : source code
+- `src/controllers` : endpoint logic
+- `src/routes` : route definitions
+- `src/services` : services such as email sending
+- `src/models` : data models
 
-Kontak
-------
-
-Untuk pertanyaan, buat issue di repository atau hubungi pemilik proyek.
-
-Lisensi
+Contact
 -------
 
-Periksa file `LICENSE` jika tersedia.
+For questions, open an issue in the repository or contact the project owner.
+
+License
+-------
+
+See the `LICENSE` file if available.

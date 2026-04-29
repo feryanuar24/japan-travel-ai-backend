@@ -54,11 +54,3 @@ export const generateItineraryLimiter = rateLimit({
     message: "Too many itinerary generation requests, please try again later",
   },
 });
-
-export const saveItineraryLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 50,
-  message: {
-    message: "Too many save requests, please try again later",
-  },
-});

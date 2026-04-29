@@ -5,7 +5,6 @@ import {
   generateItineraryLimiter,
   generateItineraryValidator,
   saveItineraryValidator,
-  saveItineraryLimiter,
 } from "../requests/itinerary.request.js";
 import {
   generateItineraryController,
@@ -29,7 +28,6 @@ itineraryRoute.post(
 itineraryRoute.post(
   "/save",
   auth,
-  saveItineraryLimiter,
   validate(saveItineraryValidator),
   saveItineraryController,
 );
