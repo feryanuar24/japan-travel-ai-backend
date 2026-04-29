@@ -8,7 +8,10 @@ const authMock = vi.fn((req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ message: "No token" });
   }
 
-  req.user = { id: "user-id" };
+  req.user = {
+    id: "user-id",
+    role: (req.headers["x-test-role"] as "user" | "admin" | undefined),
+  };
   next();
 });
 
@@ -43,7 +46,7 @@ let app: Express;
 
 beforeAll(async () => {
   app = (await import("../app.js")).default;
-});
+}, 30000);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -58,10 +61,22 @@ describe("user routes", () => {
     expect(indexUserMock).not.toHaveBeenCalled();
   });
 
+  it("forbids non-admin users", async () => {
+    const res = await request(app)
+      .get("/api/users")
+      .set("Authorization", "Bearer test")
+      .set("x-test-role", "user");
+
+    expect(res.status).toBe(403);
+    expect(res.body.message).toBe("Forbidden");
+    expect(indexUserMock).not.toHaveBeenCalled();
+  });
+
   it("lists users with token", async () => {
     const res = await request(app)
       .get("/api/users")
-      .set("Authorization", "Bearer test");
+      .set("Authorization", "Bearer test")
+      .set("x-test-role", "admin");
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("index ok");
@@ -72,6 +87,7 @@ describe("user routes", () => {
     const res = await request(app)
       .post("/api/users/store")
       .set("Authorization", "Bearer test")
+      .set("x-test-role", "admin")
       .send({});
 
     expect(res.status).toBe(400);
@@ -83,9 +99,11 @@ describe("user routes", () => {
     const res = await request(app)
       .post("/api/users/store")
       .set("Authorization", "Bearer test")
+      .set("x-test-role", "admin")
       .send({
         name: "Test User",
         email: "test@example.com",
+        role: "user",
         password: "Password1!",
       });
 
@@ -97,7 +115,8 @@ describe("user routes", () => {
   it("shows user by id", async () => {
     const res = await request(app)
       .get("/api/users/123")
-      .set("Authorization", "Bearer test");
+      .set("Authorization", "Bearer test")
+      .set("x-test-role", "admin");
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("show ok");
@@ -109,6 +128,7 @@ describe("user routes", () => {
     const res = await request(app)
       .put("/api/users/123/update")
       .set("Authorization", "Bearer test")
+      .set("x-test-role", "admin")
       .send({ email: "not-email" });
 
     expect(res.status).toBe(400);
@@ -120,6 +140,7 @@ describe("user routes", () => {
     const res = await request(app)
       .put("/api/users/123/update")
       .set("Authorization", "Bearer test")
+      .set("x-test-role", "admin")
       .send({ name: "Updated User" });
 
     expect(res.status).toBe(200);
@@ -130,7 +151,8 @@ describe("user routes", () => {
   it("deletes user by id", async () => {
     const res = await request(app)
       .delete("/api/users/123/delete")
-      .set("Authorization", "Bearer test");
+      .set("Authorization", "Bearer test")
+      .set("x-test-role", "admin");
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("delete ok");

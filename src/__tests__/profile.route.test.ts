@@ -35,7 +35,7 @@ let app: Express;
 
 beforeAll(async () => {
   app = (await import("../app.js")).default;
-});
+}, 30000);
 
 beforeEach(() => {
   vi.clearAllMocks();

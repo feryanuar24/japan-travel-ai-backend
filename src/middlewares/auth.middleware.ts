@@ -25,7 +25,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    req.user = user;
+    req.user = user as typeof req.user;
     next();
   } catch (err) {
     console.error(err);

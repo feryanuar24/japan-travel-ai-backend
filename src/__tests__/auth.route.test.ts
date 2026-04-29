@@ -2,7 +2,6 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import request from "supertest";
 import type { Express, Request, Response } from "express";
 
-
 const registerControllerMock = vi.fn((req: Request, res: Response) => {
   return res.status(200).json({ message: "register ok" });
 });
@@ -56,6 +55,7 @@ describe("auth routes", () => {
     const res = await request(app).post("/api/auth/register").send({
       name: "Test User",
       email: "test@example.com",
+      role: "user",
       password: "Password1!",
     });
 

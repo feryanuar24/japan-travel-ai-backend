@@ -20,13 +20,14 @@ export const indexUser = async (req: Request, res: Response) => {
 
 export const storeUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, role, password } = req.body;
 
     const hashed = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name,
       email,
+      role,
       password: hashed,
       emailVerifiedAt: new Date(),
     });
@@ -50,7 +51,7 @@ export const storeUser = async (req: Request, res: Response) => {
 export const showUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    
+
     const safeUser = await User.findById(id).select("-password");
     if (!safeUser) {
       return res.status(404).json({ message: "User not found" });
@@ -71,11 +72,17 @@ export const showUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, email, password } = req.body;
+    const { name, email, role, password } = req.body;
 
-    const updateData: { name?: string; email?: string; password?: string } = {
+    const updateData: {
+      name?: string;
+      email?: string;
+      role?: string;
+      password?: string;
+    } = {
       name,
       email,
+      role,
     };
 
     if (password) {

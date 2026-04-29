@@ -1,9 +1,18 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
+type ProfileUser = {
+  name?: string | null;
+  email?: string | null;
+  emailVerifiedAt?: Date | null;
+  password?: string | null;
+  save: () => Promise<unknown>;
+  deleteOne: () => Promise<unknown>;
+};
+
 export const indexProfile = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
+    const user = req.user as ProfileUser;
 
     res.json({
       message: "Profile retrieved successfully",
@@ -22,7 +31,7 @@ export const indexProfile = async (req: Request, res: Response) => {
 export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
-    const user = req.user;
+    const user = req.user as ProfileUser;
 
     if (name) {
       user.name = name;
@@ -53,7 +62,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 
 export const destroyProfile = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
+    const user = req.user as ProfileUser;
     await user.deleteOne();
     res.json({
       message: "Profile deleted successfully",

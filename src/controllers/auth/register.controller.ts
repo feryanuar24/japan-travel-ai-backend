@@ -30,6 +30,7 @@ export const registerController = async (req: Request, res: Response) => {
     const createdUser = await User.create({
       name,
       email,
+      role: "user",
       emailVerifiedAt: null,
       password: hashed,
     });

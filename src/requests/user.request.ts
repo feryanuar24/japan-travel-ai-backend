@@ -4,6 +4,7 @@ export const storeUserValidator = z.object({
   body: z.object({
     name: z.string().min(1),
     email: z.email(),
+    role: z.enum(["user", "admin"]),
     password: z
       .string()
       .min(8,)
@@ -18,6 +19,7 @@ export const updateUserValidator = z.object({
   body: z.object({
     name: z.string().min(1).optional(),
     email: z.email().optional(),
+    role: z.enum(["user", "admin"]).optional(),
     password: z
       .string()
       .min(8)

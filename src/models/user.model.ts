@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
     password: String,
     emailVerifiedAt: {
       type: Date,
