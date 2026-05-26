@@ -8,9 +8,11 @@ export const verifyEmailValidator = z.object({
 });
 
 export const verifyEmailLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
+  windowMs: 1 * 60 * 1000,
+  max: 10,
   message: {
+    status: false,
     message: "Too many verification attempts, please try again later",
+    data: null,
   },
 });

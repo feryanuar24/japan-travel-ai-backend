@@ -32,7 +32,7 @@ export const verifyEmailController = async (req: Request, res: Response) => {
 
     await safeUser.save();
 
-    res.json({
+    return res.json({
       message: "Email verified successfully",
       data: {
         user: safeUser,
@@ -40,7 +40,7 @@ export const verifyEmailController = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Internal server error",
     });
   }

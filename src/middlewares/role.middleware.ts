@@ -10,11 +10,21 @@ const role =
     const userRole = (req.user as RoleUser | undefined)?.role;
 
     if (!userRole) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res
+        .status(401)
+        .json({ 
+          status: false,
+          message: "Unauthorized",
+          data: null 
+        });
     }
 
     if (!allowedRoles.includes(userRole)) {
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({ 
+        status: false,
+        message: "Forbidden",
+        data: null
+      });
     }
 
     next();

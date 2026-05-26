@@ -34,13 +34,13 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
       html: resetPasswordMail(token),
     });
 
-    res.json({
+    return res.json({
       message: "Password reset email sent, please check your inbox",
       data: { user: safeUser },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Internal server error",
     });
   }

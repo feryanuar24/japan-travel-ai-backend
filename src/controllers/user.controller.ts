@@ -6,14 +6,18 @@ export const indexUser = async (req: Request, res: Response) => {
   try {
     const safeUsers = await User.find().select("-password");
 
-    res.json({
+    return res.json({
+      status: true,
       message: "Users retrieved successfully",
       data: { users: safeUsers },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: errMessage,
     });
   }
 };
@@ -34,7 +38,8 @@ export const storeUser = async (req: Request, res: Response) => {
 
     const safeUser = await User.findById(user._id).select("-password");
 
-    res.status(201).json({
+    return res.status(201).json({
+      status: true,
       message: "User created successfully",
       data: {
         user: safeUser,
@@ -42,8 +47,11 @@ export const storeUser = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: errMessage,
     });
   }
 };
@@ -54,17 +62,25 @@ export const showUser = async (req: Request, res: Response) => {
 
     const safeUser = await User.findById(id).select("-password");
     if (!safeUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+        data: null,
+      });
     }
 
-    res.json({
+    return res.json({
+      status: true,
       message: "User retrieved successfully",
       data: { user: safeUser },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: errMessage,
     });
   }
 };
@@ -94,17 +110,25 @@ export const updateUser = async (req: Request, res: Response) => {
       new: true,
     }).select("-password");
     if (!safeUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+        data: null,
+      });
     }
 
-    res.json({
+    return res.json({
+      status: true,
       message: "User updated successfully",
       data: { user: safeUser },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: errMessage,
     });
   }
 };
@@ -115,17 +139,25 @@ export const destroyUser = async (req: Request, res: Response) => {
 
     const safeUser = await User.findByIdAndDelete(id).select("-password");
     if (!safeUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+        data: null,
+      });
     }
 
-    res.json({
+    return res.json({
+      status: true,
       message: "User deleted successfully",
       data: { user: safeUser },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: errMessage,
     });
   }
 };

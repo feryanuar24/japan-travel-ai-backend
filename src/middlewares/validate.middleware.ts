@@ -12,8 +12,15 @@ const validate =
       next();
     } catch (err) {
       if (!(err instanceof ZodError)) {
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
         console.error(err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res
+          .status(500)
+          .json({ 
+            status: false,
+            message: "Internal server error",
+            data: errorMessage,
+          });
       }
 
       const errors = err.issues.map((issue) => ({
@@ -22,8 +29,9 @@ const validate =
       }));
 
       return res.status(400).json({
+        status: false,
         message: "Validation error",
-        errors,
+        data: errors,
       });
     }
   };

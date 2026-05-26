@@ -63,7 +63,7 @@ export const loginController = async (req: Request, res: Response) => {
     }
     const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: "7d" });
 
-    res.json({
+    return res.json({
       message: "Login successful",
       data: {
         user: safeUser,
@@ -72,7 +72,7 @@ export const loginController = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Internal server error",
     });
   }

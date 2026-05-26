@@ -22,16 +22,20 @@ export const generateItineraryController = async (
     const payload = req.body as ItineraryGenerationInput;
     const itinerary = await generateItinerary(payload);
 
-    res.json({
+    return res.json({
+      status: true,
       message: "Itinerary generated successfully",
       data: {
-        itinerary,
+        itinerary: itinerary,
       },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Failed to generate itinerary",
+      data: errMessage,
     });
   }
 };
@@ -40,7 +44,9 @@ export const saveItineraryController = async (req: Request, res: Response) => {
   try {
     const user = req.user as UserType;
     if (!user?._id) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res
+        .status(401)
+        .json({ status: false, message: "Unauthorized", data: null });
     }
 
     const payload = req.body as Omit<SaveItineraryInput, "userId">;
@@ -49,7 +55,8 @@ export const saveItineraryController = async (req: Request, res: Response) => {
       ...payload,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
+      status: true,
       message: "Itinerary saved successfully",
       data: {
         itinerary: saved,
@@ -57,8 +64,11 @@ export const saveItineraryController = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Failed to save itinerary",
+      data: errMessage,
     });
   }
 };
@@ -67,7 +77,11 @@ export const getItineraryController = async (req: Request, res: Response) => {
   try {
     const user = req.user as UserType;
     if (!user?._id) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({
+        status: false,
+        message: "Unauthorized",
+        data: null,
+      });
     }
 
     const { id } = req.params;
@@ -79,19 +93,27 @@ export const getItineraryController = async (req: Request, res: Response) => {
     const itinerary = await getItineraryById(id, user._id);
 
     if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
+      return res.status(404).json({
+        status: false,
+        message: "Itinerary not found",
+        data: null,
+      });
     }
 
-    res.json({
+    return res.json({
+      status: true,
       message: "Itinerary retrieved successfully",
       data: {
-        itinerary,
+        itinerary: itinerary,
       },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Failed to retrieve itinerary",
+      data: errMessage,
     });
   }
 };
@@ -103,21 +125,29 @@ export const listItinerariesController = async (
   try {
     const user = req.user as UserType;
     if (!user?._id) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({
+        status: false,
+        message: "Unauthorized",
+        data: null,
+      });
     }
 
     const itineraries = await getUserItineraries(user._id);
 
-    res.json({
+    return res.json({
+      status: true,
       message: "Itineraries retrieved successfully",
       data: {
-        itineraries,
+        itineraries: itineraries,
       },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Failed to retrieve itineraries",
+      data: errMessage,
     });
   }
 };
@@ -129,11 +159,15 @@ export const updateItineraryController = async (
   try {
     const user = req.user as UserType;
     if (!user?._id) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({
+        status: false,
+        message: "Unauthorized",
+        data: null,
+      });
     }
 
     const { id } = req.params;
-    
+
     if (!id || Array.isArray(id)) {
       throw new Error("Invalid id");
     }
@@ -142,19 +176,27 @@ export const updateItineraryController = async (
     const itinerary = await updateItinerary(id, user._id, updates);
 
     if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
+      return res.status(404).json({
+        status: false,
+        message: "Itinerary not found",
+        data: null,
+      });
     }
 
-    res.json({
+    return res.json({
+      status: true,
       message: "Itinerary updated successfully",
       data: {
-        itinerary,
+        itinerary: itinerary,
       },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Failed to update itinerary",
+      data: errMessage,
     });
   }
 };
@@ -166,7 +208,11 @@ export const deleteItineraryController = async (
   try {
     const user = req.user as UserType;
     if (!user?._id) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({
+        status: false,
+        message: "Unauthorized",
+        data: null,
+      });
     }
 
     const { id } = req.params;
@@ -178,19 +224,27 @@ export const deleteItineraryController = async (
     const itinerary = await deleteItinerary(id, user._id);
 
     if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
+      return res.status(404).json({
+        status: false,
+        message: "Itinerary not found",
+        data: null,
+      });
     }
 
-    res.json({
+    return res.json({
+      status: true,
       message: "Itinerary deleted successfully",
       data: {
-        itinerary,
+        itinerary: itinerary,
       },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    return res.status(500).json({
+      status: false,
       message: "Failed to delete itinerary",
+      data: errMessage,
     });
   }
 };

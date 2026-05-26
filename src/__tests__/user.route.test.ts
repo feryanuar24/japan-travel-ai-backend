@@ -85,7 +85,7 @@ describe("user routes", () => {
 
   it("rejects invalid store payload", async () => {
     const res = await request(app)
-      .post("/api/users/store")
+      .post("/api/users")
       .set("Authorization", "Bearer test")
       .set("x-test-role", "admin")
       .send({});
@@ -97,7 +97,7 @@ describe("user routes", () => {
 
   it("creates user with valid payload", async () => {
     const res = await request(app)
-      .post("/api/users/store")
+      .post("/api/users")
       .set("Authorization", "Bearer test")
       .set("x-test-role", "admin")
       .send({
@@ -126,7 +126,7 @@ describe("user routes", () => {
 
   it("rejects invalid update payload", async () => {
     const res = await request(app)
-      .put("/api/users/123/update")
+      .put("/api/users/123")
       .set("Authorization", "Bearer test")
       .set("x-test-role", "admin")
       .send({ email: "not-email" });
@@ -138,7 +138,7 @@ describe("user routes", () => {
 
   it("updates user with valid payload", async () => {
     const res = await request(app)
-      .put("/api/users/123/update")
+      .put("/api/users/123")
       .set("Authorization", "Bearer test")
       .set("x-test-role", "admin")
       .send({ name: "Updated User" });
@@ -150,7 +150,7 @@ describe("user routes", () => {
 
   it("deletes user by id", async () => {
     const res = await request(app)
-      .delete("/api/users/123/delete")
+      .delete("/api/users/123")
       .set("Authorization", "Bearer test")
       .set("x-test-role", "admin");
 

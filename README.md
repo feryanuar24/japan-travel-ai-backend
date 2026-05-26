@@ -1,14 +1,10 @@
+# Japan Travel AI Backend
 
-Japan Travel AI Backend
-=======================
-
-Description
------------
+## Description
 
 Simple backend API for the "Japan Travel AI" project. Provides authentication, profile, and itinerary endpoints.
 
-Quickstart
-----------
+## Quickstart
 
 - Requirements: `Node.js` v18+ and `npm` or `pnpm`.
 - Install dependencies:
@@ -23,8 +19,17 @@ npm install
 npm run dev
 ```
 
-Testing
--------
+- Access API Swagger documentation:
+  - **Swagger UI:** http://localhost:5000/api-docs
+
+### API Endpoints Summary
+
+- **Authentication**: Register, Login, Email Verification, Password Reset
+- **Users** (Admin only): List, Create, Read, Update, Delete
+- **Profile**: Get, Update, Delete current user
+- **Itinerary**: Generate, Save, List, Get, Update, Delete
+
+## Testing
 
 - Run unit tests with `vitest`:
 
@@ -32,26 +37,23 @@ Testing
 npm test
 ```
 
-Configuration
--------------
+## Configuration
 
-- Copy environment variables from `.env.example` (if available) and set up database and email configuration in `config/`.
+- Copy environment variables from `.env.example` and set up database and email configuration`.
 
-Project Structure
------------------
+## Project Structure
 
 - `src/` : source code
 - `src/controllers` : endpoint logic
-- `src/routes` : route definitions
+- `src/routes` : route definitions with Swagger documentation
 - `src/services` : services such as email sending
 - `src/models` : data models
+- `src/docs` : Swagger configuration files
 
-Contact
--------
+## Contact
 
 For questions, open an issue in the repository or contact the project owner.
 
-License
--------
+## License
 
-See the `LICENSE` file if available.
+This project is licensed under the MIT License.
