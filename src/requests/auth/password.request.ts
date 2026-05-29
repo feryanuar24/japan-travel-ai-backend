@@ -9,6 +9,7 @@ export const forgotPasswordValidator = z.object({
 
 export const resetPasswordValidator = z.object({
   body: z.object({
+    token: z.string().min(1),
     password: z
       .string()
       .min(8)
@@ -19,9 +20,6 @@ export const resetPasswordValidator = z.object({
         /[^A-Za-z0-9]/,
         "Password must contain at least one special character",
       ),
-  }),
-  query: z.object({
-    token: z.string().min(1),
   }),
 });
 

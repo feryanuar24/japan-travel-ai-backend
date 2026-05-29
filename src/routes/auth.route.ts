@@ -279,30 +279,27 @@ authRoute.post(
 /**
  * @swagger
  * /api/auth/reset-password:
- *   get:
+ *   post:
  *     tags:
  *       - Authentication
  *     summary: Reset user password
  *     description: Reset password using token and new password.
- *     parameters:
- *       - in: query
- *         name: token
- *         required: true
- *         schema:
- *           type: string
- *         description: Password reset token
  *     requestBody:
  *      required: true
  *      content:
- *          application/json:
- *              schema:
- *                  type: object
- *                  required:
- *                      - password
- *                  properties:
- *                    password:
- *                     type: string
- *                     format: password
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - token
+ *              - password
+ *            properties:
+ *              token:
+ *                type: string
+ *                description: Password reset token
+ *              password:
+ *                type: string
+ *                format: password
  *     responses:
  *       200:
  *         description: Password reset successfully
@@ -336,7 +333,7 @@ authRoute.post(
  *       429:
  *         description: Too many requests
  */
-authRoute.get(
+authRoute.post(
   "/reset-password",
   resetPasswordLimiter,
   validate(resetPasswordValidator),

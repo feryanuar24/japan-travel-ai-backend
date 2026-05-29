@@ -121,7 +121,7 @@ describe("auth routes", () => {
 
   it("rejects missing reset token", async () => {
     const res = await request(app)
-      .get("/api/auth/reset-password")
+      .post("/api/auth/reset-password")
       .send({ password: "Password1!" });
 
     expect(res.status).toBe(400);
@@ -131,9 +131,8 @@ describe("auth routes", () => {
 
   it("accepts reset token with password", async () => {
     const res = await request(app)
-      .get("/api/auth/reset-password")
-      .query({ token: "token" })
-      .send({ password: "Password1!" });
+      .post("/api/auth/reset-password")
+      .send({ token: "token", password: "Password1!" });
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("reset ok");

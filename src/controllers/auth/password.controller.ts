@@ -61,12 +61,7 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
 
 export const resetPasswordController = async (req: Request, res: Response) => {
   try {
-    const { token } = req.query;
-    const { password } = req.body;
-
-    if (typeof token !== "string") {
-      return res.status(400).json({ message: "Token is required" });
-    }
+    const { token, password } = req.body;
 
     const resetPasswordSecret = process.env.RESET_PASSWORD_SECRET;
     if (!resetPasswordSecret) {
