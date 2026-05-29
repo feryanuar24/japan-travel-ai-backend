@@ -11,27 +11,47 @@ export const loginController = async (req: Request, res: Response) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+        data: null,
+      });
     }
     const safeUser = await User.findById(user._id).select("-password");
 
     if (!password || !user.password) {
-      return res.status(400).json({ message: "Password is required" });
+      return res.status(400).json({
+        status: false,
+        message: "Password is required",
+        data: null,
+      });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({
+        status: false,
+        message: "Invalid credentials",
+        data: null,
+      });
     }
 
     if (!user.emailVerifiedAt) {
       const verifyEmailSecret = process.env.VERIFY_EMAIL_SECRET;
       if (!verifyEmailSecret) {
-        return res.status(500).json({ message: "Email verification secret not configured" });
+        return res.status(500).json({
+          status: false,
+          message: "Email verification secret not configured",
+          data: null,
+        });
       }
 
       const appUrl = process.env.APP_URL;
       if (!appUrl) {
-        return res.status(500).json({ message: "App URL not configured" });
+        return res.status(500).json({
+          status: false,
+          message: "App URL not configured",
+          data: null,
+        });
       }
 
       const token = jwt.sign({ id: user._id }, verifyEmailSecret, {
@@ -39,8 +59,12 @@ export const loginController = async (req: Request, res: Response) => {
       });
       const url = `${appUrl}/api/auth/verify-email?token=${token}`;
 
-      if(!user.email) {
-        return res.status(400).json({ message: "User email is missing" });
+      if (!user.email) {
+        return res.status(400).json({
+          status: false,
+          message: "User email is missing",
+          data: null,
+        });
       }
       await sendMail({
         to: user.email,
@@ -49,6 +73,7 @@ export const loginController = async (req: Request, res: Response) => {
       });
 
       return res.status(400).json({
+        status: false,
         message:
           "Email not verified, a new verification email has been sent to your inbox",
         data: {
@@ -59,11 +84,16 @@ export const loginController = async (req: Request, res: Response) => {
 
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      return res.status(500).json({ message: "JWT secret not configured" });
+      return res.status(500).json({
+        status: false,
+        message: "JWT secret not configured",
+        data: null,
+      });
     }
     const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: "7d" });
 
     return res.json({
+      status: true,
       message: "Login successful",
       data: {
         user: safeUser,
@@ -73,7 +103,9 @@ export const loginController = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: null,
     });
   }
 };

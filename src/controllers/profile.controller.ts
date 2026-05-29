@@ -15,6 +15,7 @@ export const indexProfile = async (req: Request, res: Response) => {
     const user = req.user as ProfileUser;
 
     return res.json({
+      status: true,
       message: "Profile retrieved successfully",
       data: {
         user: user,
@@ -23,7 +24,9 @@ export const indexProfile = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: null,
     });
   }
 };
@@ -47,6 +50,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     await user.save();
 
     return res.json({
+      status: true,
       message: "Profile updated successfully",
       data: {
         user: user,
@@ -55,7 +59,9 @@ export const updateProfile = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: null,
     });
   }
 };
@@ -65,6 +71,7 @@ export const destroyProfile = async (req: Request, res: Response) => {
     const user = req.user as ProfileUser;
     await user.deleteOne();
     return res.json({
+      status: true,
       message: "Profile deleted successfully",
       data: {
         user: user,
@@ -73,7 +80,9 @@ export const destroyProfile = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
+      status: false,
       message: "Internal server error",
+      data: null,
     });
   }
 };
