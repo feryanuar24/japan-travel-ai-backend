@@ -3,15 +3,34 @@ import User from "../models/user.model.js";
 import type { Request, Response, NextFunction } from "express";
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) {
+    return null;
+  }
+
+  const cookies = cookieHeader.split(";").map((part) => part.trim());
+
+  const tokenCookie = cookies?.find((cookie) => cookie.startsWith("token="));
+  if (!tokenCookie) {
+    return null;
+  }
+  const tokenFromCookie = decodeURIComponent(
+    tokenCookie?.slice("token=".length) ?? "",
+  );
+
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  const tokenFromHeader =
+    authHeader && authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+
+  const token = tokenFromCookie ?? tokenFromHeader;
+
+  if (!token) {
     return res.status(401).json({
       status: false,
       message: "Token missing or malformed",
       data: null,
     });
   }
-  const token = authHeader.slice(7);
 
   try {
     const jwtSecret = process.env.JWT_SECRET;

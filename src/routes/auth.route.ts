@@ -20,7 +20,9 @@ import {
 import validate from "../middlewares/validate.middleware.js";
 import { registerController } from "../controllers/auth/register.controller.js";
 import { loginController } from "../controllers/auth/login.controller.js";
+import logoutController from "../controllers/auth/logout.controller.js";
 import { verifyEmailController } from "../controllers/auth/email.controller.js";
+import auth from "../middlewares/auth.middleware.js";
 import {
   forgotPasswordController,
   resetPasswordController,
@@ -121,7 +123,7 @@ authRoute.post(
  *                 format: password
  *     responses:
  *       200:
- *         description: Login successful
+ *         description: Login successful; JWT is set in an HttpOnly cookie named token.
  *         content:
  *          application/json:
  *            schema:
@@ -147,8 +149,6 @@ authRoute.post(
  *                       type: string
  *                     emailVerifiedAt:
  *                       type: string
- *                 token:
- *                   type: string
  *       401:
  *         description: Invalid credentials
  *       429:
@@ -160,6 +160,20 @@ authRoute.post(
   validate(loginValidator),
   loginController,
 );
+
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Logout user
+ *     description: Clear authentication cookie and logout the current user.
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ */
+authRoute.post("/logout", auth, logoutController);
 
 /**
  * @swagger

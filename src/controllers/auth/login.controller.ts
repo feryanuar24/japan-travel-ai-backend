@@ -91,13 +91,21 @@ export const loginController = async (req: Request, res: Response) => {
       });
     }
     const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: "7d" });
+    const isProduction = process.env.APP_ENV === "production";
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
 
     return res.json({
       status: true,
       message: "Login successful",
       data: {
         user: safeUser,
-        token: token,
       },
     });
   } catch (err) {

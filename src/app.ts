@@ -9,7 +9,12 @@ import itineraryRoute from "./routes/itinerary.route.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+	cors({
+		origin: process.env.APP_CLIENT_URL?.split(",") ?? true,
+		credentials: true,
+	}),
+);
 app.use(express.json());
 
 app.use("/api/auth", authRoute);

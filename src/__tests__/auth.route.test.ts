@@ -32,6 +32,49 @@ vi.mock("../controllers/auth/password.controller.js", () => ({
   resetPasswordController: resetPasswordControllerMock,
 }));
 
+// Additional mocks for cookie/auth tests and logout
+const findOneMock = vi.fn();
+const findByIdMock = vi.fn();
+const compareMock = vi.fn();
+const signMock = vi.fn();
+const verifyMock = vi.fn();
+const sendMailMock = vi.fn();
+const registerMailMock = vi.fn();
+
+vi.mock("../models/user.model.js", () => ({
+  default: {
+    findOne: findOneMock,
+    findById: findByIdMock,
+  },
+}));
+vi.mock("bcryptjs", () => ({
+  default: {
+    compare: compareMock,
+    hash: vi.fn(),
+  },
+}));
+vi.mock("jsonwebtoken", () => ({
+  default: {
+    sign: signMock,
+    verify: verifyMock,
+  },
+}));
+vi.mock("../services/mail.service.js", () => ({
+  sendMail: sendMailMock,
+}));
+vi.mock("../templates/mail.template.js", () => ({
+  registerMail: registerMailMock,
+}));
+
+// Mock auth middleware to allow logout route in tests
+const authMock = vi.fn((req: Request, res: Response, next: any) => {
+  req.user = { id: "user-id" };
+  next();
+});
+vi.mock("../middlewares/auth.middleware.js", () => ({
+  default: authMock,
+}));
+
 let app: Express;
 
 beforeAll(async () => {
@@ -137,5 +180,77 @@ describe("auth routes", () => {
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("reset ok");
     expect(resetPasswordControllerMock).toHaveBeenCalledTimes(1);
+  });
+
+  // Cookie & logout tests
+  describe("cookie auth and logout", () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      process.env.JWT_SECRET = "jwt-secret";
+      process.env.CLIENT_ORIGIN = "http://localhost:3000";
+      signMock.mockReturnValue("signed-token");
+      verifyMock.mockReturnValue({ id: "user-id" });
+      registerMailMock.mockReturnValue("<html />");
+      sendMailMock.mockResolvedValue(undefined);
+    });
+
+    it("sets the jwt in an HttpOnly cookie", async () => {
+      const safeUser = {
+        _id: "user-id",
+        name: "Test User",
+        email: "test@example.com",
+        role: "user",
+        emailVerifiedAt: new Date().toISOString(),
+      };
+
+      findOneMock.mockResolvedValue({
+        _id: "user-id",
+        password: "hashed-password",
+        emailVerifiedAt: new Date().toISOString(),
+      });
+      findByIdMock.mockReturnValue({
+        select: vi.fn().mockResolvedValue(safeUser),
+      });
+      compareMock.mockResolvedValue(true);
+      // Create a temporary express app wired to the real login controller
+      const { default: expressLib } = await import("express");
+      const { loginController } = await vi.importActual(
+        "../controllers/auth/login.controller.js",
+      );
+
+      const tmpApp = expressLib();
+      tmpApp.use(expressLib.json());
+      tmpApp.post("/login", // @ts-ignore
+        loginController,
+      );
+
+      const res = await request(tmpApp).post("/login").send({
+        email: "test@example.com",
+        password: "Password1!",
+      });
+
+      expect(res.status).toBe(200);
+      const cookieHeader = res.headers["set-cookie"]?.[0] ?? "";
+      expect(cookieHeader).toContain("token=signed-token");
+      expect(cookieHeader).toContain("HttpOnly");
+      expect(cookieHeader).toContain("Path=/");
+      expect(cookieHeader).toContain("SameSite=Lax");
+    });
+
+    it("clears the token cookie on logout", async () => {
+      const res = await request(app)
+        .post("/api/auth/logout")
+        .set("Cookie", "token=signed-token");
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toBe("Logout successful");
+
+      const cookieHeader = res.headers["set-cookie"]?.[0] ?? "";
+      expect(cookieHeader).toContain("token=");
+      // ensure cookie is cleared (empty value or Expires/Max-Age)
+      expect(
+        cookieHeader.includes("Expires=") || cookieHeader.includes("Max-Age=0") || cookieHeader.includes("token=;")
+      ).toBeTruthy();
+    });
   });
 });
