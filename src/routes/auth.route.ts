@@ -21,6 +21,7 @@ import validate from "../middlewares/validate.middleware.js";
 import { registerController } from "../controllers/auth/register.controller.js";
 import { loginController } from "../controllers/auth/login.controller.js";
 import logoutController from "../controllers/auth/logout.controller.js";
+import meController from "../controllers/auth/me.controller.js";
 import { verifyEmailController } from "../controllers/auth/email.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 import {
@@ -174,6 +175,37 @@ authRoute.post(
  *         description: Logout successful
  */
 authRoute.post("/logout", auth, logoutController);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     tags:
+ *       - Authentication
+ *     summary: Get current authenticated user
+ *     description: Returns the currently authenticated user's profile. Requires authentication.
+ *     responses:
+ *       200:
+ *         description: User retrieved successfully
+ *         content:
+ *          application/json:
+ *            schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: boolean
+ *               message:
+ *                 type: string
+ *               data:
+ *                 type: object
+ *                 properties:
+ *                   user:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ */
+authRoute.get("/me", auth, meController);
 
 /**
  * @swagger

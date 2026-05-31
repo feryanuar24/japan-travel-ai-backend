@@ -252,5 +252,14 @@ describe("auth routes", () => {
         cookieHeader.includes("Expires=") || cookieHeader.includes("Max-Age=0") || cookieHeader.includes("token=;")
       ).toBeTruthy();
     });
+
+    it("returns the authenticated user from /me", async () => {
+      const res = await request(app).get("/api/auth/me");
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toBeDefined();
+      expect(res.body.data.user).toBeDefined();
+      expect(res.body.data.user.id).toBe("user-id");
+    });
   });
 });
