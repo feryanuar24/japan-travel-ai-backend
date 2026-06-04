@@ -52,7 +52,7 @@ export const verifyEmailController = async (req: Request, res: Response) => {
 
     await safeUser.save();
 
-    return res.json({
+    return res.render("verify-email", {
       status: true,
       message: "Email verified successfully",
       data: {
